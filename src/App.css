@@ -1,0 +1,18 @@
+.app-container { display: flex; }
+.canvas-wrapper { position: relative; }
+.rubber-rect {
+  position: absolute;
+  border: 1px dashed #333;
+  pointer-events: none;
+}
+.control-panel {
+  display: flex;
+  flex-direction: column;
+  margin-left: 16px;
+}
+.range-input {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.range-input label { margin: 0 4px; }
