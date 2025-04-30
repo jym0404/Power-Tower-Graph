@@ -30,12 +30,36 @@
   accent-color: #ff0000;
 }
 
+.accent-red::-webkit-slider-runnable-track {
+  background: #ee0000;
+}
+
+.accent-red::-webkit-slider-thumb {
+  background: #ff0000;
+}
+
 .accent-green {
   accent-color: #00ff00;
 }
 
+.accent-green::-webkit-slider-runnable-track {
+  background: #00ee00;
+}
+
+.accent-green::-webkit-slider-thumb {
+  background: #00ff00;
+}
+
 .accent-blue {
   accent-color: #0000ff;
+}
+
+.accent-blue::-webkit-slider-runnable-track {
+  background: #0000ee;
+}
+
+.accent-blue::-webkit-slider-thumb {
+  background: #0000ff;
 }
 
 .horizontal-flex {

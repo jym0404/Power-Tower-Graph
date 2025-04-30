@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import CanvasPanel from './components/CanvasPanel';
 import ControlPanel from './components/ControlPanel';
-import ColorPanel from './components/ColorPanel'
+import ColorPanel from './components/ColorPanel';
 import './App.css';
+import DOMapproach from './components/DOMapproach';
 
 //TODO: Make it beautiful
 
@@ -16,6 +17,8 @@ export default function App() {
   const [viewRect, setViewRect] = useState({ xMin: -2, xMax: 2, yMin: -2, yMax: 2 });
   const [data, setData] = useState(null);
   const [color, setColor] = useState(["#000000","#ffffff"])
+
+  const [lastSpan, setLastSpan] = useState([4,4])
 
   // API 서버의 절대 주소 (환경변수 REACT_APP_API_URL 사용 가능)
   const API_BASE = 'http://localhost:5000';
@@ -35,6 +38,7 @@ export default function App() {
 
   React.useEffect(() => {
     fetchGraph(viewRect);
+    DOMapproach();
   }, []);
 
   return (
@@ -46,12 +50,20 @@ export default function App() {
         // 원하는 색상을 hex로 전달
         convergedColor={color[0]}
         divergedColor={color[1]}
+        lastSpan={lastSpan}
       />
-      <div>
+      <div className="control-wrapper">
         <ControlPanel
           rect={viewRect}
           onChange={(newRect) => setViewRect(newRect)}
-          onDraw={() => fetchGraph(viewRect)}
+          onDraw={() => {
+            fetchGraph(viewRect);
+            setLastSpan([
+              viewRect.xMax-viewRect.xMin,
+              viewRect.yMax-viewRect.yMin
+            ])
+          }}
+          setLastSpan={setLastSpan}
         />
         <ColorPanel
           onChange={(newColor) => setColor(newColor)}

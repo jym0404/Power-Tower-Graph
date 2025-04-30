@@ -31,87 +31,112 @@ function blendHex(colorA, colorB, t) {
  * - viewRect: { xMin, xMax, yMin, yMax }
  * - convergedColor/divergedColor: hex 색상 문자열
  */
-export default function CanvasPanel({ data, viewRect, onZoomRect, convergedColor, divergedColor }) {
-  const canvasRef = useRef(null);
-  const [dragStart, setDragStart] = useState(null);
-  const [rubberRect, setRubberRect] = useState(null);
+export default function CanvasPanel({ data, viewRect, onZoomRect, convergedColor, divergedColor, lastSpan}) {
+    const canvasRef = useRef(null);
+    // 초기 x, y span 저장
+    //const initialSpanX = useRef(viewRect.xMax - viewRect.xMin);
+    //const initialSpanY = useRef(viewRect.yMax - viewRect.yMin);
+    const lastSpanX = lastSpan[0];
+    const lastSpanY = lastSpan[1];
+    const [rubberRect, setRubberRect] = useState(null);
+  
+    useEffect(() => {       
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (!data) return;
-
-    data.forEach(({ x, y, value }) => {
-      // value: 0(완전 수렴) ~ 1(완전 발산)
-      // t: 발산 쪽이 높을수록 1에 가까움
-      const t = value;
-      const cx = ((x - viewRect.xMin) / (viewRect.xMax - viewRect.xMin)) * canvas.width;
-      const cy = ((y - viewRect.yMin) / (viewRect.yMax - viewRect.yMin)) * canvas.height;
-      // 블렌딩 색상 계산
-      ctx.fillStyle = blendHex(convergedColor, divergedColor, t);
-      ctx.fillRect(cx, cy, 1, 1);
-    });
-  }, [data, viewRect, convergedColor, divergedColor]);
-
-  const toRectCoords = (start, end) => {
-    const rect = {};
-    const canvas = canvasRef.current;
-    const width = canvas.width;
-    const height = canvas.height;
-    const x0 = (start.x / width) * (viewRect.xMax - viewRect.xMin) + viewRect.xMin;
-    const y0 = (start.y / height) * (viewRect.yMax - viewRect.yMin) + viewRect.yMin;
-    const x1 = (end.x / width) * (viewRect.xMax - viewRect.xMin) + viewRect.xMin;
-    const y1 = (end.y / height) * (viewRect.yMax - viewRect.yMin) + viewRect.yMin;
-    rect.xMin = Math.min(x0, x1);
-    rect.xMax = Math.max(x0, x1);
-    rect.yMin = Math.min(y0, y1);
-    rect.yMax = Math.max(y0, y1);
-    return rect;
-  };
-
-  const onMouseDown = (e) => {
-    const rect = canvasRef.current.getBoundingClientRect();
-    setDragStart({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-  };
-  const onMouseMove = (e) => {
-    if (!dragStart) return;
-    const rect = canvasRef.current.getBoundingClientRect();
-    const current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
-    setRubberRect({ start: dragStart, end: current });
-  };
-  const onMouseUp = () => {
-    if (rubberRect) {
-      const newView = toRectCoords(rubberRect.start, rubberRect.end);
-      onZoomRect(newView);
-    }
-    setDragStart(null);
-    setRubberRect(null);
-  };
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        if (!data || data.length===0) return;
+    
+        // grid 해상도 유추: 전체 개수와 가로/세로 비율로 구분
+        // data.length = cols * rows
+        const spanX = viewRect.xMax - viewRect.xMin;
+        const spanY = viewRect.yMax - viewRect.yMin;
+        // 가로:세로 span 비율
+        const ratio = (spanX/spanY) * (canvas.height/canvas.width);
+        const total = data.length;
+        const cols = Math.round(Math.sqrt(total * (canvas.width/canvas.height) * (spanY/spanX)));
+        const rows = Math.round(total / cols);
+    
+        // 기본 dot 크기
+        const baseSizeX = canvas.width / cols;
+        const baseSizeY = canvas.height / rows;
+    
+        // zoom scale per axis
+        const scaleX = lastSpanX / spanX;
+        const scaleY = lastSpanY / spanY;
+    
+        const dotWidth = baseSizeX * scaleX;
+        const dotHeight = baseSizeY * scaleY;
+    
+        data.forEach(({ x, y, value }) => {
+            const t = value;
+            // 좌표 -> pixel
+            const cx = ((x - viewRect.xMin)/spanX)*canvas.width;
+            const cy = ((y - viewRect.yMin)/spanY)*canvas.height;
+            ctx.fillStyle = blendHex(convergedColor,divergedColor,t);
+            // 직사각형 dot 렌더링
+            ctx.fillRect(cx - dotWidth/2, cy - dotHeight/2, dotWidth, dotHeight);
+        });
+    }, [data, viewRect, convergedColor, divergedColor]);
+  
+    // pixel -> viewRect 좌표 변환
+    const toRect = (s,e) => {
+        const c = canvasRef.current, w = c.width, h = c.height;
+        const x0 = (s.x/w)*(viewRect.xMax-viewRect.xMin)+viewRect.xMin;
+        const y0 = (s.y/h)*(viewRect.yMax-viewRect.yMin)+viewRect.yMin;
+        const x1 = (e.x/w)*(viewRect.xMax-viewRect.xMin)+viewRect.xMin;
+        const y1 = (e.y/h)*(viewRect.yMax-viewRect.yMin)+viewRect.yMin;
+        return {
+            xMin:Math.min(x0,x1),
+            xMax:Math.max(x0,x1),
+            yMin:Math.min(y0,y1),
+            yMax:Math.max(y0,y1)
+        };
+    };
+  
+    // drag events
+    const onMouseDown = e => {
+            const r = canvasRef.current.getBoundingClientRect();
+            // 드래그 초기화: start와 end를 동일 좌표로 설정하여 undefined 방지
+            const point = { x: e.clientX - r.left, y: e.clientY - r.top };
+            setRubberRect({ start: point, end: point });
+        };
+    const onMouseMove = e => {
+        if(!rubberRect) return;
+        const r = canvasRef.current.getBoundingClientRect();
+        setRubberRect(rRect => ({
+            ...rRect,
+            end:{ x:e.clientX-r.left, y:e.clientY-r.top }
+        }));
+    };
+    const onMouseUp = () => {
+        if(rubberRect && rubberRect.end) onZoomRect(toRect(rubberRect.start, rubberRect.end));
+        setRubberRect(null);
+    };  
 
   return (
     <div className="canvas-wrapper">
-      <canvas
-        ref={canvasRef}
-        width={600}
-        height={600}
-        onMouseDown={onMouseDown}
-        onMouseMove={onMouseMove}
-        onMouseUp={onMouseUp}
-      />
-      {rubberRect && (
-        <div
-          className="rubber-rect"
-          style={{
-            left: Math.min(rubberRect.start.x, rubberRect.end.x),
-            top: Math.min(rubberRect.start.y, rubberRect.end.y),
-            width: Math.abs(rubberRect.end.x - rubberRect.start.x),
-            height: Math.abs(rubberRect.end.y - rubberRect.start.y),
-            borderColor: divergedColor,
-            outlineColor: convergedColor
-          }}
+        <canvas
+            ref={canvasRef}
+            width={600}
+            height={600}
+            onMouseDown={onMouseDown}
+            onMouseMove={onMouseMove}
+            onMouseUp={onMouseUp}
         />
-      )}
+        {rubberRect && (
+            <div
+            className="rubber-rect"
+            style={{
+                left: Math.min(rubberRect.start.x, rubberRect.end.x),
+                top: Math.min(rubberRect.start.y, rubberRect.end.y),
+                width: Math.abs(rubberRect.end.x - rubberRect.start.x),
+                height: Math.abs(rubberRect.end.y - rubberRect.start.y),
+                borderColor: divergedColor,
+                outlineColor: convergedColor
+            }}
+            />
+        )}
     </div>
   );
 }

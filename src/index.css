@@ -95,3 +95,14 @@ label {
   margin-left: 10px !important;
   margin-right: 10px !important;
 }
+
+@font-face {
+  font-family: 'RIDIBatang';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.0/RIDIBatang.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body{
+  font-family: RIDIBatang;
+}

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function ControlPanel({ rect, onChange, onDraw }) {
+export default function ControlPanel({ rect, onChange, onDraw}) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     onChange({ ...rect, [name]: parseFloat(value) });
@@ -21,7 +21,7 @@ export default function ControlPanel({ rect, onChange, onDraw }) {
           <input type="number" className="number-input" name="yMax" value={rect.yMax} onChange={handleChange} />
         </div>
       </div>
-      <button onClick={onDraw}>그리기</button>
+      <button onClick={onDraw}>Draw</button>
     </div>
   );
 }
