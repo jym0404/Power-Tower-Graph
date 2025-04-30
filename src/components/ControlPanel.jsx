@@ -7,17 +7,19 @@ export default function ControlPanel({ rect, onChange, onDraw }) {
   };
   return (
     <div className="control-panel">
-      <div className="range-input">
-        <label>x min:</label>
-        <input type="number" name="xMin" value={rect.xMin} onChange={handleChange} />
-        <label>~</label>
-        <input type="number" name="xMax" value={rect.xMax} onChange={handleChange} />
-      </div>
-      <div className="range-input">
-        <label>y min:</label>
-        <input type="number" name="yMin" value={rect.yMin} onChange={handleChange} />
-        <label>~</label>
-        <input type="number" name="yMax" value={rect.yMax} onChange={handleChange} />
+      <div className="view-control">
+        <div className="range-input">
+          <label>X </label>
+          <input type="number" className="number-input" name="xMin" value={rect.xMin} onChange={handleChange} />
+          <label>~</label>
+          <input type="number" className="number-input" name="xMax" value={rect.xMax} onChange={handleChange} />
+        </div>
+        <div className="range-input">
+          <label>Y </label>
+          <input type="number" className="number-input" name="yMin" value={rect.yMin} onChange={handleChange} />
+          <label>~</label>
+          <input type="number" className="number-input" name="yMax" value={rect.yMax} onChange={handleChange} />
+        </div>
       </div>
       <button onClick={onDraw}>그리기</button>
     </div>

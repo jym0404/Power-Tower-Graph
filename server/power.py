@@ -24,8 +24,8 @@ def generate_power_tower_image(
     xmax: float,
     ymin: float,
     ymax: float,
-    width: int = 1000,
-    height: int = 1000,
+    width: int = 600,
+    height: int = 600,
     max_iter: int = 50,
     escape_radius: float = 1e6
 ) -> List[Dict[str, float]]:

@@ -106,7 +106,9 @@ export default function CanvasPanel({ data, viewRect, onZoomRect, convergedColor
             left: Math.min(rubberRect.start.x, rubberRect.end.x),
             top: Math.min(rubberRect.start.y, rubberRect.end.y),
             width: Math.abs(rubberRect.end.x - rubberRect.start.x),
-            height: Math.abs(rubberRect.end.y - rubberRect.start.y)
+            height: Math.abs(rubberRect.end.y - rubberRect.start.y),
+            borderColor: divergedColor,
+            outlineColor: convergedColor
           }}
         />
       )}
