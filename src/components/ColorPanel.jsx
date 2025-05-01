@@ -15,40 +15,40 @@ export default function ColorPanel({ onChange }) {
     }, [rgb1, rgb2]);
 
     return (
-        <div>
-            <div>
+        <div className="color-panel">
+            <div className="color-control-unit">
                 <label>Color 1</label>
                 <div className="horizontal-flex">
                     <label>R</label>
-                    <input type="range" min="0" max="255" value="0" className="accent-red"
+                    <input type="range" min="0" max="255" defaultValue="0" className="accent-red"
                         onChange={(e) => setRgb1(prev => ({ ...prev, r: parseInt(e.target.value, 10) }))} />
                 </div>
                 <div className="horizontal-flex">
                     <label>G</label>
-                    <input type="range" min="0" max="255" value="0" className="accent-green"
+                    <input type="range" min="0" max="255" defaultValue="0" className="accent-green"
                         onChange={(e) => setRgb1(prev => ({ ...prev, g: parseInt(e.target.value, 10) }))} />
                 </div>
                 <div className="horizontal-flex">
                     <label>B</label>
-                    <input type="range" min="0" max="255" value="0" className="accent-blue"
+                    <input type="range" min="0" max="255" defaultValue="0" className="accent-blue"
                         onChange={(e) => setRgb1(prev => ({ ...prev, b: parseInt(e.target.value, 10) }))} />
                 </div>
             </div>
-            <div>
+            <div className="color-control-unit">
                 <label>Color 2</label>
                 <div className="horizontal-flex">
                     <label>R</label>
-                    <input type="range" min="0" max="255" value="255" className="accent-red"
+                    <input type="range" min="0" max="255" defaultValue="255" className="accent-red"
                         onChange={(e) => setRgb2(prev => ({ ...prev, r: parseInt(e.target.value, 10) }))} />
                 </div>
                 <div className="horizontal-flex">
                     <label>G</label>
-                    <input type="range" min="0" max="255" value="255" className="accent-green"
+                    <input type="range" min="0" max="255" defaultValue="255" className="accent-green"
                         onChange={(e) => setRgb2(prev => ({ ...prev, g: parseInt(e.target.value, 10) }))} />
                 </div>
                 <div className="horizontal-flex">
                     <label>B</label>
-                    <input type="range" min="0" max="255" value="255" className="accent-blue"
+                    <input type="range" min="0" max="255" defaultValue="255" className="accent-blue"
                         onChange={(e) => setRgb2(prev => ({ ...prev, b: parseInt(e.target.value, 10) }))} />
                 </div>
             </div>
