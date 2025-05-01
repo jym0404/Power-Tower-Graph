@@ -52,21 +52,28 @@ export default function CanvasPanel({ data, viewRect, onZoomRect, convergedColor
         const spanX = viewRect.xMax - viewRect.xMin;
         const spanY = viewRect.yMax - viewRect.yMin;
         // 가로:세로 span 비율
-        const ratio = (spanX/spanY) * (canvas.height/canvas.width);
-        const total = data.length;
-        const cols = Math.round(Math.sqrt(total * (canvas.width/canvas.height) * (spanY/spanX)));
-        const rows = Math.round(total / cols);
-    
+        //const ratio = (spanX/spanY) * (canvas.height/canvas.width);
+        //const total = data.length;
+        //const cols = Math.round(Math.sqrt(total * (canvas.width/canvas.height) * (spanY/spanX)));
+        //const rows = Math.round(total / cols);
+        
+        //(lastSpanX*lastSpanY)/total
+
         // 기본 dot 크기
-        const baseSizeX = canvas.width / cols;
-        const baseSizeY = canvas.height / rows;
+        //const baseSizeX = canvas.width / cols;
+        //const baseSizeY = canvas.height / rows;
     
         // zoom scale per axis
-        const scaleX = lastSpanX / spanX;
-        const scaleY = lastSpanY / spanY;
+        //const scaleX = lastSpanX / spanX;
+        //const scaleY = lastSpanY / spanY;
     
-        const dotWidth = baseSizeX * scaleX;
-        const dotHeight = baseSizeY * scaleY;
+        //const dotWidth = baseSizeX * scaleX;
+        //const dotHeight = baseSizeY * scaleY;
+
+        const dotWidth =  lastSpanX / spanX + (lastSpanX!=spanX?1:0);
+        const dotHeight = lastSpanY / spanY + (lastSpanY!=spanY?1:0);
+
+        //어차피 canvas 600x600 서버에서 600x600 보내니까 일치함
     
         data.forEach(({ x, y, value }) => {
             const t = value;

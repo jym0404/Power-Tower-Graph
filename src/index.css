@@ -86,7 +86,7 @@ body {
 
 .number-input {
   font-size: large;
-  width: 150px !important;
+  width: 200px !important;
   height: 50px !important;
   margin-bottom: 0px !important;
 }
@@ -105,4 +105,18 @@ label {
 
 body{
   font-family: RIDIBatang;
+}
+
+body{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+footer{
+  color: #777777;
+  position: absolute;
+  bottom: 10px;
+  padding: 0;
+  height: 20px;
 }

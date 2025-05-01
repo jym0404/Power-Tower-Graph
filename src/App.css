@@ -2,6 +2,8 @@
   display: flex;
   flex-wrap: wrap-reverse;
   justify-content: space-around;
+  align-items: center;
+  flex-direction: row;
 }
 .canvas-wrapper { position: relative; }
 .rubber-rect {
