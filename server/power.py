@@ -1,23 +1,21 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from numba import jit
+#from numba import jit
 from typing import List, Dict
+import cupy as cp
 
-#TODO: Use Cupy to optimize generating these bunch of numbers
-
-@jit
-def custom_meshgrid(x, y):
-    x_len = x.shape[0]
-    y_len = y.shape[0]
-    xx = np.empty((y_len, x_len), dtype=x.dtype)
-    yy = np.empty((y_len, x_len), dtype=y.dtype)
-    
-    for i in range(y_len):
-        for j in range(x_len):
-            xx[i, j] = x[j]
-            yy[i, j] = y[i]
-    
-    return xx, yy
+#@jit
+#def custom_meshgrid(x, y):
+#    x_len = x.shape[0]
+#    y_len = y.shape[0]
+#    xx = np.empty((y_len, x_len), dtype=x.dtype)
+#    yy = np.empty((y_len, x_len), dtype=y.dtype)
+#    
+#    for i in range(y_len):
+#        for j in range(x_len):
+#            xx[i, j] = x[j]
+#            yy[i, j] = y[i]
+#    
+#    return xx, yy
 
 def generate_power_tower_image(
     xmin: float,
@@ -43,34 +41,34 @@ def generate_power_tower_image(
     - value: 0(완전 수렴) ~ 1(완전 발산)
     """
     # 1. 복소수 평면 그리드 생성
-    x = np.linspace(xmin, xmax, width)
-    y = np.linspace(ymin, ymax, height)
-    X, Y = custom_meshgrid(x, y)
+    x = cp.linspace(xmin, xmax, width)
+    y = cp.linspace(ymin, ymax, height)
+    X, Y = cp.meshgrid(x, y)
     Z = X + 1j * Y
 
     # 2. Power Tower 반복 계산
     W = Z.copy()
-    mask = np.ones_like(Z, dtype=bool)
-    iter_count = np.zeros(Z.shape, dtype=int)
+    mask = cp.ones_like(Z, dtype=bool)
+    iter_count = cp.zeros(Z.shape, dtype=int)
 
     for i in range(max_iter):
-        W[mask] = np.power(Z[mask], W[mask])
-        diverged = np.abs(W) > escape_radius
+        W[mask] = cp.power(Z[mask], W[mask])
+        diverged = cp.abs(W) > escape_radius
         new_diverged = diverged & mask
         iter_count[new_diverged] = i
         mask &= ~diverged
 
     # 3. 밝기 값으로 변환 및 클리핑
-    brightness = iter_count.astype(np.float32) / max_iter
-    brightness = np.clip(brightness, 0.0, 1.0)
+    brightness = iter_count.astype(cp.float32) / max_iter
+    brightness = cp.clip(brightness, 0.0, 1.0)
 
     # 4. 반환용 리스트 생성
     #   메모리 고려 시 너무 큰 배열은 주의 (width*height 개)
     result: List[Dict[str, float]] = []
     # flatten
-    xs = X.flatten()
-    ys = Y.flatten()
-    vs = brightness.flatten()
+    xs = cp.asnumpy(X).flatten()
+    ys = cp.asnumpy(Y).flatten()
+    vs = cp.asnumpy(brightness).flatten()
     for xi, yi, vi in zip(xs, ys, vs):
         result.append({'x': float(xi), 'y': float(yi), 'value': float(vi)})
 
