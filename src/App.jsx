@@ -4,6 +4,7 @@ import ControlPanel from './components/ControlPanel';
 import ColorPanel from './components/ColorPanel';
 import './App.css';
 import DOMapproach from './components/DOMapproach';
+import generatePowerTowerData from './components/Calculation'
 
 //TODO: Make it beautiful
 
@@ -20,6 +21,8 @@ export default function App() {
 
   const [lastSpan, setLastSpan] = useState([4,4])
 
+  const resolution = [600,600]
+
   // API 서버의 절대 주소 (환경변수 REACT_APP_API_URL 사용 가능)
   const API_BASE = 'http://localhost:5000';
 
@@ -27,13 +30,19 @@ export default function App() {
    * 서버에서 그래프 데이터를 가져오는 함수
    * 서버는 각 점마다 0~1 사이의 convergence 수치(value)를 반환
    */
-  const fetchGraph = async (rect) => {
+  const fetchGraph = (rect) => {
+    console.log('Fetching...') //----------------------
     const { xMin, xMax, yMin, yMax } = rect;
-    const res = await fetch(
-      `${API_BASE}/api/powertower?xmin=${xMin}&xmax=${xMax}&ymin=${yMin}&ymax=${yMax}`
-    );
-    const json = await res.json();
-    setData(json);
+    const res = generatePowerTowerData(
+      xMin, xMax,
+      yMin, yMax,
+      1e6,
+      50,
+      resolution
+    )
+    //const json = await res.json();
+    setData(res);
+    console.log('Done!') //----------------------
   };
 
   React.useEffect(() => {
@@ -51,6 +60,7 @@ export default function App() {
         convergedColor={color[0]}
         divergedColor={color[1]}
         lastSpan={lastSpan}
+        resolution={resolution}
       />
       <div className="control-wrapper">
         <ControlPanel

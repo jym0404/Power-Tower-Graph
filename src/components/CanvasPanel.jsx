@@ -31,7 +31,7 @@ function blendHex(colorA, colorB, t) {
  * - viewRect: { xMin, xMax, yMin, yMax }
  * - convergedColor/divergedColor: hex 색상 문자열
  */
-export default function CanvasPanel({ data, viewRect, onZoomRect, convergedColor, divergedColor, lastSpan}) {
+export default function CanvasPanel({ data, viewRect, onZoomRect, convergedColor, divergedColor, lastSpan, resolution}) {
     const canvasRef = useRef(null);
     // 초기 x, y span 저장
     //const initialSpanX = useRef(viewRect.xMax - viewRect.xMin);
@@ -70,10 +70,8 @@ export default function CanvasPanel({ data, viewRect, onZoomRect, convergedColor
         //const dotWidth = baseSizeX * scaleX;
         //const dotHeight = baseSizeY * scaleY;
 
-        const dotWidth =  lastSpanX / spanX + (lastSpanX!=spanX?1:0);
-        const dotHeight = lastSpanY / spanY + (lastSpanY!=spanY?1:0);
-
-        //어차피 canvas 600x600 서버에서 600x600 보내니까 일치함
+        const dotWidth =  lastSpanX*(canvas.width/resolution[0]) / spanX + (lastSpanX!=spanX?1:0);
+        const dotHeight = lastSpanY*(canvas.height/resolution[1]) / spanY + (lastSpanY!=spanY?1:0);
     
         data.forEach(({ x, y, value }) => {
             const t = value;
