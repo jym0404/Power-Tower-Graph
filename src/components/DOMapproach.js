@@ -5,8 +5,6 @@ export default function DOMapproach(){
       
         const baseTop = base.getBoundingClientRect().top;
         const targetTop = target.getBoundingClientRect().top;
-
-        console.log(baseTop, targetTop)
         
         if (baseTop > 300) { //I don't know why getBoundingClientRect().top doesn't work well. So I hardcoded it.
           target.style.display = 'none';
