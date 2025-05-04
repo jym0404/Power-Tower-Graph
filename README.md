@@ -31,6 +31,7 @@ Built with **React**, **Vite**, and **HTML5 Canvas**.
 ![Dragging](Images/2.png)
 ![Color Custom](Images/3.png)
 ![Support for Pads](Images/4.png)
+
 ※ Phones are not supported yet.
 
 ## 🛠️ Getting Started
