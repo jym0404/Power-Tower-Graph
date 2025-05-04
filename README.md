@@ -1,4 +1,3 @@
-My first React project to practice React and FastAPI.
-Used ChatGPT a lot.
+README for full stack version is not ready yet.
 
-You don't forced to use cupy-cuda12x in server. It just requires a cupy.
+Click [here](https://github.com/jym0404/Power-Tower-Graph/tree/client-only) for the client-only version.
