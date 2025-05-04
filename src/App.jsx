@@ -6,8 +6,6 @@ import './App.css';
 import DOMapproach from './components/DOMapproach';
 import generatePowerTowerData from './components/Calculation'
 
-//TODO: Make it beautiful
-
 /**
  * App 컴포넌트
  * - 전체 앱의 상태를 관리
@@ -17,14 +15,11 @@ import generatePowerTowerData from './components/Calculation'
 export default function App() {
   const [viewRect, setViewRect] = useState({ xMin: -2, xMax: 2, yMin: -2, yMax: 2 });
   const [data, setData] = useState(null);
-  const [color, setColor] = useState(["#000000","#ffffff"])
+  const [color, setColor] = useState(["#000000","#ffffff"]) // Default Colors
 
   const [lastSpan, setLastSpan] = useState([4,4])
 
-  const resolution = [600,600]
-
-  // API 서버의 절대 주소 (환경변수 REACT_APP_API_URL 사용 가능)
-  const API_BASE = 'http://localhost:5000';
+  const resolution = [600,600] // Resolution
 
   /**
    * 서버에서 그래프 데이터를 가져오는 함수
@@ -36,11 +31,10 @@ export default function App() {
     const res = generatePowerTowerData(
       xMin, xMax,
       yMin, yMax,
-      1e6,
-      50,
+      1e6, // Escape Radius
+      50, // Max Iteration
       resolution
     )
-    //const json = await res.json();
     setData(res);
     console.log('Done!') //----------------------
   };
@@ -56,7 +50,6 @@ export default function App() {
         data={data}
         viewRect={viewRect}
         onZoomRect={(newRect) => setViewRect(newRect)}
-        // 원하는 색상을 hex로 전달
         convergedColor={color[0]}
         divergedColor={color[1]}
         lastSpan={lastSpan}
